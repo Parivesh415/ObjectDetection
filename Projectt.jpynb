@@ -1,0 +1,66 @@
+# Mount Google Drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+# Load the necessary libraries
+import cv2
+import numpy as np
+import os
+
+# Define paths to the model files
+config_file = '/content/drive/My Drive/ObjectDetection/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
+frozen_model = '/content/drive/My Drive/ObjectDetection/frozen_inference_graph.pb'
+class_labels_file = '/content/drive/My Drive/ObjectDetection/coco.names'
+
+# Check if the files exist
+if not os.path.isfile(frozen_model):
+    print("Frozen model file does not exist. Please check the path.")
+if not os.path.isfile(config_file):
+    print("Config file does not exist. Please check the path.")
+if not os.path.isfile(class_labels_file):
+    print("Class labels file does not exist. Please check the path.")
+
+# Load the class labels
+with open(class_labels_file, 'r') as f:
+    class_labels = f.read().strip().split('\n')
+
+# Load the DNN model
+net = cv2.dnn.readNetFromTensorflow(frozen_model, config_file)
+
+# Function to perform object detection on an image
+def detect_objects(image):
+    height, width, _ = image.shape
+
+    # Create a blob from the image
+    blob = cv2.dnn.blobFromImage(image, 1.0 / 127.5, (320, 320), (127.5, 127.5, 127.5), swapRB=True, crop=False)
+
+    # Set the input to the network
+    net.setInput(blob)
+
+    # Forward pass to get the detections
+    detections = net.forward()
+
+    for detection in detections[0, 0]:
+        confidence = detection[2]
+        if confidence > 0.5:  # Confidence threshold
+            class_index = int(detection[1])
+            box = detection[3:7] * np.array([width, height, width, height])
+            (startX, startY, endX, endY) = box.astype("int")
+
+            # Draw bounding box and label
+            label = f"{class_labels[class_index]}: {confidence:.2f}"
+            cv2.rectangle(image, (startX, startY), (endX, endY), (0, 255, 0), 2)
+            cv2.putText(image, label, (startX, startY - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+    return image
+
+# For image detection
+image_path = '/content/drive/My Drive/ObjectDetection/kite.jpeg'  # Replace with your image path
+image = cv2.imread(image_path)  # Load the image
+detected_image = detect_objects(image)  # Perform detection
+
+# Display the detected image
+import matplotlib.pyplot as plt
+plt.imshow(cv2.cvtColor(detected_image, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+plt.show()
