@@ -14,7 +14,8 @@ You can either make new shell and then make partitions of the code and run it se
 <br>
 <br>
 
-<h3>Through Your Own Editor</h3>h3>
+<h3>Through Your Own Editor</h3>
 Import all the required libraries into your system and then run the python file.
 <br>
 If you have any queries feel free to contact me at pari040105@gmail.com
+My output are not accurate as i did not have enough time to train my model propely.
