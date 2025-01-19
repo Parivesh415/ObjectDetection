@@ -7,7 +7,11 @@ Copy the whole code and Open Google Collab With a new file and Paste the whole C
 You can either make new shell and then make partitions of the code and run it sequentially to make the code run more Accurately.
 <img src="kite.jpeg">Input Image
 <br>
+<br>
+<br>
 <img src="output.jpg">Output Image
+<br>
+<br>
 <br>
 
 <h3>Through Your Own Editor</h3>h3>
